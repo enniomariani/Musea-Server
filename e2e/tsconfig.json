@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.node.json",
+  "compilerOptions": {
+    "types": ["@wdio/globals/types"],
+    "lib": ["DOM"],
+    "module": "ES2022",
+    "moduleResolution": "bundler"
+  },
+  "include": ["./**/*", "../src/**/*"],
+  "references": [
+    {
+      "path": "../src/musea-server/renderer"
+    }
+  ]
+}

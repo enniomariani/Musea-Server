@@ -1,0 +1,49 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "sourceMap": true,
+    "composite": true,
+    "declaration": true,
+
+    "lib": ["DOM", "DOM.Iterable"],
+
+    "baseUrl": ".",
+    "paths": {
+      "main/*": ["src/musea-server/main/*"],
+      "renderer/*": ["src/musea-server/renderer/*"]
+    }
+  },
+  "references": [
+    {
+      "path": "./src/musea-server/main"
+    },
+    {
+      "path": "./src/musea-server/preload"
+    },
+    {
+      "path": "./src/musea-server/renderer"
+    },
+    {
+      "path": "./src/musea-server/mocks"
+    },
+    {
+      "path": "./src/test-app/main"
+    },
+    {
+      "path": "./src/test-app/preload"
+    },
+    {
+      "path": "./src/test-app/renderer"
+    }
+  ],
+  "exclude": ["**/build/**", "**/tests/**"],
+  "files": []  // Important: prevents root config from compiling anything
+}

@@ -1,0 +1,13 @@
+{
+  "extends": "../../../tsconfig.node.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "outDir": "../../../build/musea-server/preload",
+    "rootDir": "."
+  },
+  "include": ["./**/*.ts"],
+  "references": [
+    { "path": "../main"}
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "name": "musea-server",
+  "author": "Ennio Mariani",
+  "email": "mail@enniomariani.ch",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/enniomariani/Musea-Server"
+  },
+  "license": "GPL-3.0-only",
+  "description": "Library for media management and communication with Musea-Clients.",
+  "type": "module",
+  "main": "./build/test-app/main/main.js",
+  "scripts": {
+    "e2e": "cls && wdio run ./wdio.conf.ts ",
+    "test": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js ./tests --maxWorkers=50% --coverage",
+    "start": "electron-forge start",
+    "dev": "cross-env NODE_ENV=development npm start",
+    "package": "npm run build && electron-forge package && npm run e2e",
+    "clean": "rimraf build/",
+    "copy:html": "copyfiles -u 1 \"src/**/*.html\" build",
+    "copy:d.ts": "copyfiles -u 1 \"src/**/*.d.ts\" build",
+    "copy": "npm run copy:html && npm run copy:d.ts",
+    "build": "cls && npm run clean && tsc --b && tsc-alias -p tsconfig.node.json --outDir build && npm run copy"
+  },
+  "exports": {
+    "./main": {
+      "types": "./build/musea-server/main/index.d.ts",
+      "default": "./build/musea-server/main/index.js",
+      "import": "./build/musea-server/main/index.js"
+    },
+    "./renderer": {
+      "types": "./build/musea-server/renderer/index.d.ts",
+      "default": "./build/musea-server/renderer/index.js",
+      "import": "./build/musea-server/renderer/index.js"
+    },
+    "./preload": {
+      "types": "./build/musea-server/preload/index.d.ts",
+      "default": "./build/musea-server/preload/index.js",
+      "import": "./build/musea-server/preload/index.js"
+    },
+    "./mocks": {
+      "types": "./build/musea-server/mocks/index.d.ts",
+      "default": "./build/musea-server/mocks/index.js",
+      "import": "./build/musea-server/mocks/index.js"
+    }
+  },
+  "files": [
+    "build/musea-server"
+  ],
+  "devDependencies": {
+    "@electron-forge/cli": "^7.10.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.10.2",
+    "@electron-forge/plugin-fuses": "^7.10.2",
+    "@jest/globals": "^30.2.0",
+    "@types/jest": "^30.0.0",
+    "@types/ws": "^8.18.1",
+    "@wdio/cli": "^9.20.0",
+    "@wdio/local-runner": "^9.20.0",
+    "@wdio/mocha-framework": "^9.20.0",
+    "@wdio/spec-reporter": "^9.20.0",
+    "copyfiles": "^2.4.1",
+    "cross-env": "^10.1.0",
+    "electron": "^38.4.0",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.4.5",
+    "ts-loader": "^9.5.4",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.9.3",
+    "wdio-electron-service": "^9.2.1"
+  },
+  "dependencies": {
+    "dmx-ts": "^0.4.0",
+    "jsonschema": "^1.5.0",
+    "rotating-file-stream": "^3.2.7",
+    "ws": "^8.18.3"
+  }
+}

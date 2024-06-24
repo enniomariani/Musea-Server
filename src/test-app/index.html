@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+        <meta http-equiv="Content-Security-Policy"
+              content="default-src 'none'; script-src 'self'; connect-src 'self';media-src 'self' file:; img-src 'self' data:; style-src 'self';base-uri 'self';form-action 'self'" />
+        <meta http-equiv="X-Content-Security-Policy"
+              content="default-src 'none'; script-src 'self'; connect-src 'self';media-src 'self' file:; img-src 'self' data:; style-src 'self';base-uri 'self';form-action 'self'" />
+
+        <title>Musea-Server</title>
+    </head>
+
+    <body>
+        <script src="renderer/renderer.js" type="module" ></script>
+    </body>
+</html>

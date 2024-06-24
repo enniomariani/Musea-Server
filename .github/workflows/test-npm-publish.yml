@@ -1,0 +1,103 @@
+# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
+# For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
+
+name: TEST Publish as npm-package
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Unit tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+        
+      - name: Build + Package + e2e-tests
+        run: npm run package
+
+      - name: Debug - List build output
+        run: dir
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: build/musea-server/**/*
+
+  publish-test-npm:
+    needs: build
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: build/musea-server
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org/
+      - run: npm ci
+      - name: Debug - List files
+        run: dir # See what's actually there
+      - run: npm pack
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-tarball
+          path: "*.tgz"
+
+  manual-approval:
+    name: Manual Approval
+    runs-on: ubuntu-latest
+    needs: publish-test-npm
+    if: success() # Only proceed if terraform-plan job succeeds
+    
+    permissions:
+      issues: write
+
+    steps:
+      - name: Await Manual Approval
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: enniomariani
+          minimum-approvals: 1
+          issue-title: "Manual Approval Required for publishing on npm"
+          issue-body: "Please approve or deny if the package.tgz is ready for deployment."
+
+  publish-npm:
+    needs: manual-approval
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: build/musea-server
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org/
+      - run: npm ci
+      - run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

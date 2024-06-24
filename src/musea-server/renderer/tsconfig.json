@@ -1,0 +1,11 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../../build/musea-server/renderer",
+    "rootDir": ".",
+  },
+  "include": ["./**/*.ts"],
+  "references": [
+    { "path": "../main"}
+  ]
+}
