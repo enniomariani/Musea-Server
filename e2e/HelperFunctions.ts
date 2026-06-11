@@ -6,7 +6,7 @@ export const NO_RESPONSE_IN_TIME: string = "Did not receive response in time";
 
 export async function waitForWebSocketConnection(localIp:string = ""): Promise<WebSocket> {
     console.log("Connect app via Websocket");
-    const serverAddress:string = "ws://localhost:5000";
+    const serverAddress:string = "ws://localhost:8001";
 
     return new Promise<WebSocket>((resolve, reject) => {
         let ws:WebSocket;

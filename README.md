@@ -94,7 +94,7 @@ museaServer.registerAdminAppDisconnectedCallback(callbackAdminAppDisconnected);
 
 //pathToDataFolder ist ein string, siehe Variable pathToDataFolder oben im main Kontext
 await museaServer.start(pathToDataFolder, {
-    port: 5000,  //standard-Port auf dem der Server Nachrichten empfängt
+    port: 8001,  //standard-Port auf dem der Server Nachrichten empfängt
     lightInitSequence: false //wenn true wird beim Start der App eine Sequenz an die DMX-Lichter gesendet (hell - dunkel - hell - preset 1)
 });
 ```

@@ -3,7 +3,7 @@ import {IOnConnectionClosed, IOnNewConnection, Server} from "renderer/network/Se
 import {IOnDataReceived} from "main/MainSocketServer.js";
 
 let server: Server;
-let serverPort: number = 5000;
+let serverPort: number = 8001;
 let ip: string = "192.168.0.1";
 let dataWithInOneChunk: Uint8Array = new Uint8Array([0x01, 0x00, 0x03, 0xFF, 0x1A]);
 let dataInOneChunkWithoutChunkInfo: Uint8Array = new Uint8Array([0x03, 0xFF, 0x1A]);
