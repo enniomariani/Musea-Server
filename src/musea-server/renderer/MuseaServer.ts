@@ -49,11 +49,11 @@ export class MuseaServer {
      *
      * @param {string} pathToDataFolder the path to the folder where logs, saved media and the contents.json file (if this is defined in the admin-console as controller) are saved
      * @param config        options:
-     * - config.port: defines the port on which the server is listening. Default is 5000.
+     * - config.port: defines the port on which the server is listening. Default is 8001.
      * - lightInitSequence: if true, the server sends a light-sequence when starting to the DMX-lights: bright - dark -bright and then preset 1.
      */
     async start(pathToDataFolder:string, config:any = {}):Promise<void>{
-        let port:number = 5000;
+        let port:number = 8001;
 
         if(config.port !== undefined)
             port = config.port;

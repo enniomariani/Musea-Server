@@ -88,7 +88,7 @@ describe("start() should ", () => {
     it("call the callback onClientConnected when a client connected and pass the correct IP", () => {
         let clientConnectedCallback: IOnClientConnected = jest.fn();
 
-        server.start(5000, clientConnectedCallback, jest.fn(), jest.fn());
+        server.start(8001, clientConnectedCallback, jest.fn(), jest.fn());
 
         expect(clientConnectedCallback).toHaveBeenCalledTimes(1);
         expect(clientConnectedCallback).toHaveBeenCalledWith(mockIp);
@@ -97,7 +97,7 @@ describe("start() should ", () => {
     it("call the callback onMessageReceived when a client sent data and pass the data and the ip to this callback", () => {
         let onMessageReceived: IOnDataReceived = jest.fn();
 
-        server.start(5000, jest.fn(), onMessageReceived, jest.fn());
+        server.start(8001, jest.fn(), onMessageReceived, jest.fn());
 
         expect(onMessageReceived).toHaveBeenCalledTimes(1);
         expect(onMessageReceived).toHaveBeenCalledWith(mockIp,mockDataBinary);
@@ -107,7 +107,7 @@ describe("start() should ", () => {
         let onConnectionClosedCallback: IOnConnectionClosed = jest.fn();
         closeConnection = true;
 
-        server.start(5000, jest.fn(), jest.fn(), onConnectionClosedCallback);
+        server.start(8001, jest.fn(), jest.fn(), onConnectionClosedCallback);
 
         expect(onConnectionClosedCallback).toHaveBeenCalledTimes(1);
         expect(onConnectionClosedCallback).toHaveBeenCalledWith(mockIp);
@@ -116,7 +116,7 @@ describe("start() should ", () => {
 
 describe("sendDataToClient() should ", () => {
     it("call send() of websocket with the passed data", () => {
-        server.start(5000, jest.fn(), jest.fn(), jest.fn());
+        server.start(8001, jest.fn(), jest.fn(), jest.fn());
         server.sendDataToClient(mockIp, mockDataBinary);
 
         expect(mockSendDataFunc).toHaveBeenCalledTimes(1);
@@ -124,7 +124,7 @@ describe("sendDataToClient() should ", () => {
     });
 
     it("return true if the connection was open", () => {
-        server.start(5000, jest.fn(), jest.fn(), jest.fn());
+        server.start(8001, jest.fn(), jest.fn(), jest.fn());
         const response:boolean = server.sendDataToClient(mockIp, mockDataBinary);
         expect(response).toBe(true);
     });
@@ -142,7 +142,7 @@ describe("sendDataToClient() should ", () => {
 
 describe("closeConnection() should ", () => {
     it("close a connection if it is open", async () => {
-        server.start(5000, jest.fn(), jest.fn(), jest.fn());
+        server.start(8001, jest.fn(), jest.fn(), jest.fn());
         await server.closeConnection(mockIp);
         expect(mockCloseConnection).toHaveBeenCalledTimes(1);
     });
@@ -153,7 +153,7 @@ describe("closeConnection() should ", () => {
     });
 
     it("print an error if connection is already closed", () => {
-        server.start(5000, jest.fn(), jest.fn(), jest.fn());
+        server.start(8001, jest.fn(), jest.fn(), jest.fn());
         server.closeConnection(mockIp);
         server.closeConnection(mockIp);
 
