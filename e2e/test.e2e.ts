@@ -7,7 +7,7 @@ import {browser} from 'wdio-electron-service';
 import {ConvertNetworkData} from "../src/musea-server/renderer/network/ConvertNetworkData.js";
 import {
     closeWebSocketConnection, NO_RESPONSE_IN_TIME,
-    sendCommandToWSClient, waitForRegistrationAsAdminAndSendCommand, waitForTimeOut,
+    sendCmdToMuseaServer, waitForRegistrationAsAdminAndSendCommand, waitForTimeOut,
     waitForWebSocketConnection, waitForWebSocketResponse
 } from "./HelperFunctions.js";
 
@@ -66,7 +66,7 @@ describe('Electron Testing', () => {
     });
 });
 
-describe("Test network calls: ", () => {
+describe("Test network calls: musea server...", () => {
     beforeEach(() => {
         console.log("\n\n---- NEW TEST -----\n\n");
     });
@@ -106,7 +106,7 @@ describe("Test network calls: ", () => {
         }
     });
 
-    it("should be able to connect to the ws-Server", async () => {
+    it("... should be able to connect to the ws-Server (the test-client here)", async () => {
         try {
             tempWS = await waitForWebSocketConnection();
         } catch (error) {
@@ -115,12 +115,12 @@ describe("Test network calls: ", () => {
         expect(tempWS?.readyState).toBe(WebSocket.OPEN);
     });
 
-    it("should get a pong-command if it sends a ping-command", async () => {
+    it("... should send a pong-command if it sends a ping-command", async () => {
         const expectedResponse: string[] = ["network", "pong"];
 
         tempWS = await waitForWebSocketConnection();
 
-        sendCommandToWSClient(tempWS, ["network", "ping"]);
+        sendCmdToMuseaServer(tempWS, ["network", "ping"]);
         let response: (string | Uint8Array)[] | null = null;
 
         try {
@@ -133,12 +133,12 @@ describe("Test network calls: ", () => {
         expect(response).toStrictEqual(expectedResponse);
     });
 
-    it("should get an accepted command if client tries to register as admin-app", async () => {
+    it("... should send an accepted command if client tries to register as admin-app", async () => {
         const expectedResponse: string[] = ["network", "registration", "accepted"];
 
         tempWS = await waitForWebSocketConnection();
 
-        sendCommandToWSClient(tempWS, ["network", "register", "admin"]);
+        sendCmdToMuseaServer(tempWS, ["network", "register", "admin"]);
         let response: (string | Uint8Array)[] | null = null;
 
         try {
@@ -148,12 +148,12 @@ describe("Test network calls: ", () => {
         expect(response).toStrictEqual(expectedResponse);
     });
 
-    it("should get an accepted command if client tries to register as admin-app but is already registered", async () => {
+    it("... should send an accepted command if client tries to register as admin-app but is already registered", async () => {
         const expectedResponse: string[] = ["network", "registration", "accepted"];
 
         tempWS = await waitForWebSocketConnection();
 
-        sendCommandToWSClient(tempWS, ["network", "register", "admin"]);
+        sendCmdToMuseaServer(tempWS, ["network", "register", "admin"]);
         let response: (string | Uint8Array)[] | null = null;
 
         try {
@@ -161,7 +161,7 @@ describe("Test network calls: ", () => {
         } catch (error) {
         }
 
-        sendCommandToWSClient(tempWS, ["network", "register", "admin"]);
+        sendCmdToMuseaServer(tempWS, ["network", "register", "admin"]);
 
         try {
             response = await waitForWebSocketResponse(tempWS);
@@ -170,12 +170,12 @@ describe("Test network calls: ", () => {
         expect(response).toStrictEqual(expectedResponse);
     });
 
-    it("should get an accepted command if client tries to register as user-app", async () => {
+    it("... should send an accepted command if client tries to register as user-app", async () => {
         const expectedResponse: string[] = ["network", "registration", "accepted"];
 
         tempWS = await waitForWebSocketConnection();
 
-        sendCommandToWSClient(tempWS, ["network", "register", "user"]);
+        sendCmdToMuseaServer(tempWS, ["network", "register", "user"]);
         let response: (string | Uint8Array)[] | null = null;
 
         try {
@@ -185,18 +185,18 @@ describe("Test network calls: ", () => {
         expect(response).toStrictEqual(expectedResponse);
     });
 
-    it("should get an accepted command if client tries to register as user-app and if it is already registered", async () => {
+    it("... should send an accepted command if client tries to register as user-app and if it is already registered", async () => {
         const expectedResponse: string[] = ["network", "registration", "accepted"];
 
         tempWS = await waitForWebSocketConnection();
 
-        sendCommandToWSClient(tempWS, ["network", "register", "user"]);
+        sendCmdToMuseaServer(tempWS, ["network", "register", "user"]);
 
         try {
             await waitForWebSocketResponse(tempWS);
         } catch (error) {}
 
-        sendCommandToWSClient(tempWS, ["network", "register", "user"]);
+        sendCmdToMuseaServer(tempWS, ["network", "register", "user"]);
         let response: (string | Uint8Array)[] | null = null;
 
         try {
@@ -206,12 +206,12 @@ describe("Test network calls: ", () => {
         expect(response).toStrictEqual(expectedResponse);
     });
 
-    it("should get an accepted command if client tries to register as admin-app, closes the conneciton and re-registers", async () => {
+    it("... should send an accepted command if client tries to register as admin-app, closes the conneciton and re-registers", async () => {
         const expectedResponse: string[] = ["network", "registration", "accepted"];
 
         tempWS = await waitForWebSocketConnection();
 
-        sendCommandToWSClient(tempWS, ["network", "register", "admin"]);
+        sendCmdToMuseaServer(tempWS, ["network", "register", "admin"]);
         let response1: (string | Uint8Array)[] | null = null;
 
         try {
@@ -225,7 +225,7 @@ describe("Test network calls: ", () => {
         }
 
         tempWS = await waitForWebSocketConnection();
-        sendCommandToWSClient(tempWS, ["network", "register", "admin"]);
+        sendCmdToMuseaServer(tempWS, ["network", "register", "admin"]);
         let response2: (string | Uint8Array)[] | null = null;
 
         try {
@@ -236,12 +236,12 @@ describe("Test network calls: ", () => {
         expect(response2).toStrictEqual(expectedResponse);
     });
 
-    it("should get a YES command if client checks registration as admin-app and no admin-app is connected yet", async () => {
+    it("... should send a YES command if client checks registration as admin-app and no admin-app is connected yet", async () => {
         const expectedResponse: string[] = ["network", "isRegistrationPossible", "yes"];
 
         tempWS = await waitForWebSocketConnection();
 
-        sendCommandToWSClient(tempWS, ["network", "isRegistrationPossible"]);
+        sendCmdToMuseaServer(tempWS, ["network", "isRegistrationPossible"]);
         let response: (string | Uint8Array)[] | null = null;
 
         try {
@@ -251,18 +251,18 @@ describe("Test network calls: ", () => {
         expect(response).toStrictEqual(expectedResponse);
     });
 
-    it("should get a YES command if client checks registration as admin-app and itself is already connected", async () => {
+    it("... should send a YES command if client checks registration as admin-app and itself is already connected", async () => {
         const expectedResponse: string[] = ["network", "isRegistrationPossible", "yes"];
 
         tempWS = await waitForWebSocketConnection();
 
-        sendCommandToWSClient(tempWS, ["network", "register", "admin"]);
+        sendCmdToMuseaServer(tempWS, ["network", "register", "admin"]);
 
         try {
             await waitForWebSocketResponse(tempWS);
         } catch (error) {}
 
-        sendCommandToWSClient(tempWS, ["network", "isRegistrationPossible"]);
+        sendCmdToMuseaServer(tempWS, ["network", "isRegistrationPossible"]);
         let response: (string | Uint8Array)[] | null = null;
 
         try {
@@ -272,13 +272,13 @@ describe("Test network calls: ", () => {
         expect(response).toStrictEqual(expectedResponse);
     });
 
-    it("should get a NO command if client checks registration as admin-app and an admin-app is already connected", async () => {
+    it("... should send a NO command if client checks registration as admin-app and an admin-app is already connected", async () => {
         const expectedResponse: string[] = ["network", "isRegistrationPossible", "no"];
 
         console.log("connect with first IP")
         tempWS = await waitForWebSocketConnection();
 
-        sendCommandToWSClient(tempWS, ["network", "register", "admin"]);
+        sendCmdToMuseaServer(tempWS, ["network", "register", "admin"]);
 
         try {
             await waitForWebSocketResponse(tempWS);
@@ -288,7 +288,7 @@ describe("Test network calls: ", () => {
 
         const ws2:WebSocket = await waitForWebSocketConnection("127.0.0.2");
 
-        sendCommandToWSClient(ws2, ["network", "isRegistrationPossible"]);
+        sendCmdToMuseaServer(ws2, ["network", "isRegistrationPossible"]);
         let response: (string | Uint8Array)[] | null = null;
 
         try {
@@ -299,10 +299,10 @@ describe("Test network calls: ", () => {
         await closeWebSocketConnection(ws2);
     });
 
-    it("nothing should be answered if I try to send a contents-json without being registered", async () => {
+    it("... should send nothing if client sends a contents-json without being registered", async () => {
         tempWS = await waitForWebSocketConnection();
-        sendCommandToWSClient(tempWS, ["contents", "put", "MY CONTENTS FILE WHICH IS NOT REGISTERED"]);
-        sendCommandToWSClient(tempWS, ["contents", "get"]);
+        sendCmdToMuseaServer(tempWS, ["contents", "put", "MY CONTENTS FILE WHICH IS NOT REGISTERED"]);
+        sendCmdToMuseaServer(tempWS, ["contents", "get"]);
 
         let response = await new Promise<Uint8Array | string>((resolve, reject) => {
             const timeout = setTimeout(() => {
@@ -318,7 +318,7 @@ describe("Test network calls: ", () => {
         expect(response).toBe("OK");
     });
 
-    it("A user-app should get a block-command if an admin-app connects to an app with role controller", async () => {
+    it("... should send a block-command if a default-client connects and an admin-client is already connected", async () => {
         let myContentsJSON: string = JSON.stringify({
             image: 0,
             imagePath: "path",
@@ -328,16 +328,16 @@ describe("Test network calls: ", () => {
 
         tempWS = await waitForWebSocketConnection();
 
-        sendCommandToWSClient(tempWS, ["network", "register", "admin"]);
+        sendCmdToMuseaServer(tempWS, ["network", "register", "admin"]);
 
         try {
             await waitForWebSocketResponse(tempWS);
         } catch (error) {}
 
-        sendCommandToWSClient(tempWS, ["contents", "put", myContentsJSON]);
+        sendCmdToMuseaServer(tempWS, ["contents", "put", myContentsJSON]);
 
         const wsUserApp:WebSocket = await waitForWebSocketConnection("127.0.0.2");
-        sendCommandToWSClient(wsUserApp, ["network", "register", "user"]);
+        sendCmdToMuseaServer(wsUserApp, ["network", "register", "user"]);
         try {
             response = await waitForWebSocketResponse(wsUserApp);
         } catch (error) {}
@@ -347,7 +347,7 @@ describe("Test network calls: ", () => {
         await closeWebSocketConnection(wsUserApp);
     });
 
-    it("I should get my contents back if I put it to the server and try to download it later", async () => {
+    it("... should send the contents if the client uploaded a contents.json before", async () => {
         let myContentsJSON: string = JSON.stringify({
             image: 0,
             imagePath: "path",
@@ -357,14 +357,14 @@ describe("Test network calls: ", () => {
 
         tempWS = await waitForWebSocketConnection();
 
-        sendCommandToWSClient(tempWS, ["network", "register", "admin"]);
+        sendCmdToMuseaServer(tempWS, ["network", "register", "admin"]);
 
         try {
             await waitForWebSocketResponse(tempWS);
         } catch (error) {}
 
-        sendCommandToWSClient(tempWS, ["contents", "put", myContentsJSON]);
-        sendCommandToWSClient(tempWS, ["contents", "get"]);
+        sendCmdToMuseaServer(tempWS, ["contents", "put", myContentsJSON]);
+        sendCmdToMuseaServer(tempWS, ["contents", "get"]);
         let response2: (string | Uint8Array)[] | null = null;
 
         try {
@@ -374,7 +374,7 @@ describe("Test network calls: ", () => {
         expect(response2).toStrictEqual(expectedResponse);
     });
 
-    it("I should get a string with an empty JSON back if I there is no content-file and I try to download one", async () => {
+    it("... should send a string with an empty JSON if a client tries to download a contents.json but there is none", async () => {
         const expectedResponse: string[] = ["contents", "put", "{}"];
         let response: (string | Uint8Array)[] | null = null;
         //delete contents-file in the data-folder:
@@ -387,7 +387,7 @@ describe("Test network calls: ", () => {
         expect(response).toStrictEqual(expectedResponse);
     });
 
-    it("If a jpeg is put to the server I should get it's ID as an answer-network-call", async () => {
+    it("... should send the ID of a successfully uploaded JPEG", async () => {
         const imageData: Uint8Array = new Uint8Array([0, 1, 5, 10, 100]);
         const expectedResponse: string[] = ["media", "put", nextId.toString()];
         let response: (string | Uint8Array)[] | null = null;
@@ -398,7 +398,19 @@ describe("Test network calls: ", () => {
         expect(response).toStrictEqual(expectedResponse);
     });
 
-    it("If a not valid media-type is put to the server I should get nothing as an answer-network-call", async () => {
+    it("... should send the ID of a successfully uploaded MP4", async () => {
+        nextId++;
+        const imageData: Uint8Array = new Uint8Array([0, 1, 5, 10, 100]);
+        const expectedResponse: string[] = ["media", "put", nextId.toString()];
+        let response: (string | Uint8Array)[] | null = null;
+
+        tempWS = await waitForWebSocketConnection();
+        response = await waitForRegistrationAsAdminAndSendCommand(tempWS, ["media", "put", "mp4", imageData]);
+
+        expect(response).toStrictEqual(expectedResponse);
+    });
+
+    it("... should send nothing if the client tries to upload an invalid media type", async () => {
         const imageData: Uint8Array = new Uint8Array([0, 1, 5, 10, 100]);
         let response: (string | Uint8Array)[] | null = null;
 
@@ -412,19 +424,7 @@ describe("Test network calls: ", () => {
         expect(response).toStrictEqual([NO_RESPONSE_IN_TIME]);
     });
 
-    it("If a mp4 is put to the server I should get it's ID as an answer-network-call", async () => {
-        nextId++;
-        const imageData: Uint8Array = new Uint8Array([0, 1, 5, 10, 100]);
-        const expectedResponse: string[] = ["media", "put", nextId.toString()];
-        let response: (string | Uint8Array)[] | null = null;
-
-        tempWS = await waitForWebSocketConnection();
-        response = await waitForRegistrationAsAdminAndSendCommand(tempWS, ["media", "put", "mp4", imageData]);
-
-        expect(response).toStrictEqual(expectedResponse);
-    });
-
-    it("The server should return the path, id and media-type of an added PNG", async () => {
+    it("... should return via local API: the path, id and media-type of an uploaded PNG", async () => {
         nextId++;
         const imageData: Uint8Array = new Uint8Array([0, 1, 5, 10, 100]);
 
@@ -432,7 +432,7 @@ describe("Test network calls: ", () => {
 
         const response:(string | Uint8Array)[] | null = await waitForRegistrationAsAdminAndSendCommand(tempWS, ["media", "put", "png", imageData]);
 
-        sendCommandToWSClient(tempWS, ["media", "control", "play", nextId.toString()]);
+        sendCmdToMuseaServer(tempWS, ["media", "control", "play", nextId.toString()]);
 
         // Retrieve the text content of the new div element
         const recievedName = await $('#e2eFileName').getText();
@@ -447,7 +447,7 @@ describe("Test network calls: ", () => {
         expect(recievedCommand).toEqual("play," + nextId.toString());
     });
 
-    it("The server should return the path, id and media-type of an added JPEG", async () => {
+    it("... should return via local API: the path, id and media-type of an added JPEG", async () => {
         nextId++;
         const imageData: Uint8Array = new Uint8Array([0, 1, 5, 10, 100]);
 
@@ -456,7 +456,7 @@ describe("Test network calls: ", () => {
         const response:(string | Uint8Array)[] | null = await waitForRegistrationAsAdminAndSendCommand(tempWS,
             ["media", "put", "jpeg", imageData]);
 
-        sendCommandToWSClient(tempWS, ["media", "control", "play", nextId.toString()]);
+        sendCmdToMuseaServer(tempWS, ["media", "control", "play", nextId.toString()]);
 
 
         const nameDiv = await $('#e2eFileName');
@@ -476,7 +476,7 @@ describe("Test network calls: ", () => {
         expect(recievedCommand).toEqual("play," + nextId.toString());
     });
 
-    it("The server should return the path, id and media-type of an added MP4-video", async () => {
+    it("... should return via local API: the path, id and media-type of an added MP4-file", async () => {
         nextId++;
         const imageData: Uint8Array = new Uint8Array([0, 1, 5, 10, 200]);
 
@@ -485,7 +485,7 @@ describe("Test network calls: ", () => {
         const response:(string | Uint8Array)[] | null = await waitForRegistrationAsAdminAndSendCommand(tempWS,
             ["media", "put", "mp4", imageData]);
 
-        sendCommandToWSClient(tempWS, ["media", "control", "play", nextId.toString()]);
+        sendCmdToMuseaServer(tempWS, ["media", "control", "play", nextId.toString()]);
 
         // Retrieve the text content of the new div element
         const recievedName = await $('#e2eFileName').getText();
@@ -500,7 +500,7 @@ describe("Test network calls: ", () => {
         expect(recievedCommand).toEqual("play," + nextId.toString());
     });
 
-    it("The server should delete a media-file if it receives a delete-command", async () => {
+    it("... should delete a media-file if it receives a delete-command", async () => {
         nextId++;
         const imageData: Uint8Array = new Uint8Array([0, 1, 5, 10, 200]);
 
@@ -508,29 +508,29 @@ describe("Test network calls: ", () => {
 
         await waitForRegistrationAsAdminAndSendCommand(tempWS, ["media", "put", "mp4", imageData]);
 
-        sendCommandToWSClient(tempWS, ["media", "delete", nextId.toString()]);
+        sendCmdToMuseaServer(tempWS, ["media", "delete", nextId.toString()]);
 
         await waitForTimeOut(500);
 
         expect(existsSync(dirMedia + "\\" + nextId.toString() + ".mp4")).toBe(false);
     });
 
-    it("The server should delete the media-file with the ID 0 (added in a previous test) if it receives a delete-command", async () => {
+    it("... should delete the media-file with the ID 0 (added in a previous test) if it receives a delete-command", async () => {
         tempWS = await waitForWebSocketConnection();
         await waitForRegistrationAsAdminAndSendCommand(tempWS, null);
 
-        sendCommandToWSClient(tempWS, ["media", "delete", "0"]);
+        sendCmdToMuseaServer(tempWS, ["media", "delete", "0"]);
 
         await waitForTimeOut(500);
 
         expect(existsSync(dirMedia + "\\0.jpeg")).toBe(false);
     });
 
-    it("The server should return null as name and media-type for a previously deleted media", async () => {
+    it("... should return via local API: null as name and media-type for a previously deleted media", async () => {
         tempWS = await waitForWebSocketConnection();
         await waitForRegistrationAsAdminAndSendCommand(tempWS, null);
 
-        sendCommandToWSClient(tempWS, ["media", "control", "play", "0"]);
+        sendCmdToMuseaServer(tempWS, ["media", "control", "play", "0"]);
 
         const nameDiv = await $('#e2eFileName');
         const typeDiv = await $('#e2eFileType');
@@ -547,11 +547,11 @@ describe("Test network calls: ", () => {
         expect(recievedType).toEqual("");
     });
 
-    it("The server should execute the system-command callback with the correct command if it receives a system/volume/mute command", async () => {
+    it("... should execute on the local API: the system-command callback with the correct command if it receives a system/volume/mute command", async () => {
         tempWS = await waitForWebSocketConnection();
         await waitForRegistrationAsAdminAndSendCommand(tempWS, null);
 
-        sendCommandToWSClient(tempWS, ["system", "volume", "mute"]);
+        sendCmdToMuseaServer(tempWS, ["system", "volume", "mute"]);
 
         await waitForWebSocketConnection();
 
@@ -563,11 +563,11 @@ describe("Test network calls: ", () => {
         expect(recievedCommand).toEqual("volume,mute");
     });
 
-    it("The server should execute the system-command callback with the correct command if it receives a system/volume/unmute command", async () => {
+    it("... should execute on the local API: the system-command callback with the correct command if it receives a system/volume/unmute command", async () => {
         tempWS = await waitForWebSocketConnection();
         await waitForRegistrationAsAdminAndSendCommand(tempWS, null);
 
-        sendCommandToWSClient(tempWS, ["system", "volume", "unmute"]);
+        sendCmdToMuseaServer(tempWS, ["system", "volume", "unmute"]);
 
         await waitForWebSocketConnection();
 
@@ -579,11 +579,11 @@ describe("Test network calls: ", () => {
         expect(recievedCommand).toEqual("volume,unmute");
     });
 
-    it("The server should execute the system-command callback with the correct command if it receives a system/volume/set/0.2 command", async () => {
+    it("... should execute on the local API: the system-command callback with the correct command if it receives a system/volume/set/0.2 command", async () => {
         tempWS = await waitForWebSocketConnection();
         await waitForRegistrationAsAdminAndSendCommand(tempWS, null);
 
-        sendCommandToWSClient(tempWS, ["system", "volume", "set", "0.2"]);
+        sendCmdToMuseaServer(tempWS, ["system", "volume", "set", "0.2"]);
 
         await waitForWebSocketConnection();
 
@@ -595,7 +595,7 @@ describe("Test network calls: ", () => {
         expect(recievedCommand).toEqual("volume,set,0.2");
     });
 
-    it("The server should execute the AdminAppDisconnected callback when the admin-app closes the connection", async () => {
+    it("... should execute on the local API: the AdminAppDisconnected callback when the admin-app closes the connection", async () => {
         tempWS = await waitForWebSocketConnection();
         await waitForRegistrationAsAdminAndSendCommand(tempWS, null);
 
