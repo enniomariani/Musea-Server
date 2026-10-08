@@ -15,6 +15,8 @@
 
     "lib": ["DOM", "DOM.Iterable"],
 
+    // Kept intentionally for tsc-alias.
+    // See docs/decisions/0001-typescript-5-until-tsc-alias-ts6-support.md
     "baseUrl": ".",
     "paths": {
       "main/*": ["src/musea-server/main/*"],

@@ -29,7 +29,7 @@ export async function waitForWebSocketConnection(localIp:string = ""): Promise<W
 }
 
 export async function waitForRegistrationAsAdminAndSendCommand(ws:WebSocket, command:(string | Uint8Array)[] | null){
-    sendCommandToWSClient(ws, ["network", "register", "admin"]);
+    sendCmdToMuseaServer(ws, ["network", "register", "admin"]);
 
     try {
         await waitForWebSocketResponse(ws);
@@ -41,7 +41,7 @@ export async function waitForRegistrationAsAdminAndSendCommand(ws:WebSocket, com
         let response: (string | Uint8Array)[];
 
         if(command){
-            sendCommandToWSClient(ws, command);
+            sendCmdToMuseaServer(ws, command);
 
             try {
                 response = await waitForWebSocketResponse(ws);
@@ -56,7 +56,7 @@ export async function waitForRegistrationAsAdminAndSendCommand(ws:WebSocket, com
     });
 }
 
-export function sendCommandToWSClient( ws:WebSocket, command: (string | Uint8Array)[]){
+export function sendCmdToMuseaServer(ws:WebSocket, command: (string | Uint8Array)[]){
     const encodedCommand:Uint8Array = ConvertNetworkData.encodeCommand(...command);
     const junkInfo:Uint8Array = new Uint8Array([0x01, 0x00]);
     ws.send([...junkInfo, ...encodedCommand]);
